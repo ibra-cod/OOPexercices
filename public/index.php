@@ -4,15 +4,16 @@ session_start();
 use App\Auth;
 use App\Database;
 
-require "../vendor/autoload.php";
-   ;
+require "../vendor/autoload.php";;
+  
 $user = Database::getAuth()->user();
+dump($user);
     $request =  Database::getPDO()->prepare('SELECT * FROM users');
     $request->execute();
     $users = $request->fetchAll(PDO::FETCH_ASSOC);
 
-    
-    dump( $user)
+
+
 ?>
 
 <!DOCTYPE html>
@@ -28,6 +29,8 @@ $user = Database::getAuth()->user();
     <ul>
         <li><a href="admin.php">Page réservée à l'administrateur</a></li>
         <li><a href="user.php">Page réservée à l'utilisateur</a></li>
+
+        <li><a href="login.php">loginr</a></li>
     </ul>
 
    <?php  if ($user) : ?>

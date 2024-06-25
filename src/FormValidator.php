@@ -40,8 +40,7 @@ class FormValidator
             {
                 $value['user' ] = $this->username;
                 $value['pass'] = $this->passsword;
-                $Auth = new Auth(Database::getPDO(), '/login');
-                return $Auth->login($value['user' ], $value['pass']);
+                 return $value;
             } else {
                 $this->addErrors('userlength', 'Wrong charather used for username or password');
                 return $this->errors;

@@ -6,22 +6,14 @@ use App\FormValidator;
 
 require '../vendor/autoload.php';
 
-$auth = Database::getAuth();
+$auth = Database::getAuth()->user();
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
-    
-        $auth = Database::getAuth()->login($_POST['username'], $_POST['username']);
-    
-    dump($user);
-    if ($user) {
-            header('Location: index.php?login=1');
-            exit();
-    }
+        $auth = Database::getAuth()->login($_POST['username'], $_POST['password']);
+        dump($auth);
 }
-// if ($auth->user() !== null) {
-//     header('Location: index.php');
-//     exit();
-// }git 
+
 
 
 

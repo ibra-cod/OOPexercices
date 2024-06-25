@@ -14,16 +14,12 @@ class Auth
         $this->loginPath = $loginPath;
     }
     
-    public function StartSession() 
-    {
-            if (session_status() === PHP_SESSION_NONE) {
-                session_start();
-            }
-    }
 
-    public function role( ...$roles)
+    public function role( array | string ...$roles)
     {
         $user = $this->user();
+
+        dump($user);
       
             if ($user == null || $user->role !== $roles) {
             if (!in_array($user->role, $roles)) {
@@ -35,11 +31,12 @@ class Auth
 
    public function user(): ?User
     {
-       $this->StartSession();
-        $id = $_SESSION['userID'] ?? null;
-        if ($id === null) {
-            return null;
+      
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
         }
+        $id = $_SESSION['userID'] ?? null;
+       
         $query = $this->pdo->prepare('SELECT * FROM users WHERE id = ?');
         $query->execute([$id]);
         $user = $query->fetchObject(User::class);
@@ -50,34 +47,41 @@ class Auth
 
     public function login (string $user, string $password) : ?User 
     {
-            $this->StartSession();
+
+        if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
 
         $form = new FormValidator($user, $password);
         $result = $form->checkRegisterForms();
-
-        dump($result);
+        extract($result,EXTR_REFS);
+        
         
         $request = $this->pdo->prepare('SELECT * FROM users where username =  :username');
         $request->bindParam(':username', $user, $this->pdo::PARAM_STR);
         
-        // $hasg = password_hash('user',PASSWORD_ARGON2ID  );
+        // $hasg = password_hash('ssiap134',PASSWORD_ARGON2ID  );
         // var_dump($hasg);
         // $request = $this->pdo->prepare("INSERT INTO users (username, password,role) VALUES(?, ?, ?)");
 
-        // $request->bindValue(1, 'apple', $this->pdo::PARAM_STR);
+        // $request->bindValue(1, 'ssiap', $this->pdo::PARAM_STR);
         // $request->bindValue(2, $hasg, $this->pdo::PARAM_STR);
-        // $request->bindValue(3, 'apple', $this->pdo::PARAM_STR);
+        // $request->bindValue(3, 'vip', $this->pdo::PARAM_STR);
 
        
         $request->execute();
         $user = $request->fetchObject(User::class);
+
+        dump($user);
         
         if ($user === false) {
             return null;
         }
-        if (password_verify($password, $user->password)) {
-            dump('flse');
-            $_SESSION['userID'] = $user->id;
+        if (password_verify($pass, $user->password)) {
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
+                $_SESSION['userID'] = $user->id;
              return $user;
         }
         return null;
