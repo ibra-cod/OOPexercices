@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
 // if ($auth->user() !== null) {
 //     header('Location: index.php');
 //     exit();
-// }
+// }git 
 
 
 
