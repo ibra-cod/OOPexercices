@@ -23,7 +23,10 @@ class Database
      public static function getAuth() : Auth {
 
         if (is_null(self::$auth)) {
-             self::$auth = new Auth(self::getPDO(), '/login');
+           if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+           }
+             self::$auth = new Auth(self::getPDO(), '/login', $_SESSION);
         }
         return self::$auth;
     }

@@ -2,41 +2,42 @@
 
 namespace App;
 
+use App\Exceptions\ForbiddenException;
+
 class Auth
 {
 
     public $pdo;
     public $loginPath;
+    public $session;
 
-    public function __construct(\PDO $pdo, string $loginPath) 
+    public function __construct(\PDO $pdo, string $loginPath, array &$session) 
     {
         $this->pdo =  $pdo;
         $this->loginPath = $loginPath;
+        $this->session = &$session;
     }
     
 
     public function role( array | string ...$roles)
     {
         $user = $this->user();
-
-        dump($user);
-      
-            if ($user == null || $user->role !== $roles) {
+            dump($this->session);
+            if ($user == null ) {
+                 throw new ForbiddenException('You must be connted.');
+            } 
             if (!in_array($user->role, $roles)) {
-                header('Location: index.php');
+                $roles = implode(',', $roles);
+                $userRole = $user->role;
+                throw new ForbiddenException("You're role is $userRole and you must be $roles to be able to see this page");
             }
-        } 
 
     }
 
    public function user(): ?User
     {
-      
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        $id = $_SESSION['userID'] ?? null;
-       
+        $id = $this->session['auth'] ?? null;
+
         $query = $this->pdo->prepare('SELECT * FROM users WHERE id = ?');
         $query->execute([$id]);
         $user = $query->fetchObject(User::class);
@@ -72,16 +73,19 @@ class Auth
         $request->execute();
         $user = $request->fetchObject(User::class);
 
-        dump($user);
         
         if ($user === false) {
             return null;
         }
+
+
         if (password_verify($pass, $user->password)) {
-            if (session_status() === PHP_SESSION_NONE) {
-                session_start();
-            }
-                $_SESSION['userID'] = $user->id;
+            // if (session_status() === PHP_SESSION_NONE) {
+            //     session_start();
+            // } replaces by the code below 
+            //  $_SESSION['userID'] = $user->id;
+            $this->session['auth'] = $user->id;
+               
              return $user;
         }
         return null;
