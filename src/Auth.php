@@ -15,17 +15,14 @@ class Auth
     }
     
 
-    public function role( array | string ...$roles)
+    public function role( array | string ...$roles) : void
     {
-        $user = $this->user();
-
-        dump($user);
-      
+            $user = $this->user();
             if ($user == null || $user->role !== $roles) {
-            if (!in_array($user->role, $roles)) {
-                header('Location: index.php');
-            }
-        } 
+                if (!in_array($user->role, $roles)) {
+                    header('Location: index.php');
+                }
+            } 
 
     }
 

@@ -5,7 +5,7 @@ use App\FormValidator;
 
 require '../vendor/autoload.php';
 
-$auth = Database::getAuth()->role('admin');
+$auth = Database::getAuth()->role('admin', 'vip');
 ?>
 
 Réservé à l'admin

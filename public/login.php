@@ -1,24 +1,18 @@
 <?php
-
 use App\Auth;
 use App\Database;
 use App\FormValidator;
-
 require '../vendor/autoload.php';
-
 $auth = Database::getAuth()->user();
-
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
         $auth = Database::getAuth()->login($_POST['username'], $_POST['password']);
         dump($auth);
 }
-
-
-
-
-
-?><!DOCTYPE html>
+if ($auth !== null) {
+    header('Location: index.php');
+}
+?>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
